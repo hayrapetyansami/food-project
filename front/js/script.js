@@ -216,24 +216,57 @@ window.addEventListener("DOMContentLoaded", () => {
 
       const data = new FormData(e.target);
 
-      const request = new XMLHttpRequest();
-      request.open("POST", "http://localhost:8888/data", true);
-      request.setRequestHeader("Content-type", "application/json");
-      request.send(JSON.stringify(Object.fromEntries(data)));
       status.textContent = messages.loading;
 
-      request.addEventListener("load", () => {
-        if (request.status === 200) {
-          status.textContent = messages.success;
-        } else {
+      fetch("http://localhost:8888/data", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(Object.fromEntries(data))
+      })
+        .then(res => {
+          console.log(res);
+          if (!res.ok) {
+            status.textContent = messages.failure;
+          } else {
+            status.textContent = messages.success;
+          }
+        })
+        .catch(err => {
+          console.log(`CATCH ERROR: ${err}`);
           status.textContent = messages.failure;
-        }
+        })
+        .finally(() => {
+          const timerID = setTimeout(() => {
+            e.target.reset();
+            status.textContent = "";
+            clearTimeout(timerID);
+          }, 1500);
+        });
 
-        setTimeout(() => {
-          e.target.reset();
-          status.textContent = "";
-        }, 1500);
-      });
+      // const request = new XMLHttpRequest();
+      // request.open("POST", "http://localhost:8888/data", true);
+      // request.setRequestHeader("Content-type", "application/json");
+      // request.send(JSON.stringify(Object.fromEntries(data)));
+      // status.textContent = messages.loading;
+
+      // request.addEventListener("load", () => {
+      //   if (request.status === 200) {
+      //     status.textContent = messages.success;
+      //   } else {
+      //     status.textContent = messages.failure;
+      //   }
+
+      //   setTimeout(() => {
+      //     e.target.reset();
+      //     status.textContent = "";
+      //   }, 1500);
+      // });
     });
   }
+
+  fetch("http://localhost:8888/users")
+    .then(response => response.json())
+    .then(data => console.log(data));
 });

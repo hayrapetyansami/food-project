@@ -173,7 +173,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const element = document.createElement("div");
       const { src, alt, title, descr, price } = this;
       element.innerHTML = `
-        <div class="menu__item">
+        <div class="menu__item" style="max-width: 280px">
           <img src=${src} alt=${alt}>
           <h3 class="menu__item-subtitle">${title}</h3>
           <div class="menu__item-descr">${descr}</div>
@@ -188,8 +188,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  fetch("http://localhost:8888/menu")
-    .then(res => res.json())
+  getData("http://localhost:8888/menu")
     .then(data => {
       data.forEach(item => {
         new MenuCard(
@@ -203,11 +202,30 @@ window.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-  // forms
+  // forms & fetch
+  async function postData(url, data) {
+    const result = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: data
+    });
+
+    return await result.json();
+  }
+
+  async function getData(url) {
+    const result = await fetch(url);
+
+    if (result.ok) {
+      return await result.json();
+    }
+  }
 
   const forms = document.querySelectorAll("form");
   const status = document.querySelector("#status");
-  forms.forEach(form => postData(form));
+  forms.forEach(form => bindPostData(form));
 
   const messages = {
     loading: "Загрузка",
@@ -215,23 +233,14 @@ window.addEventListener("DOMContentLoaded", () => {
     failure: "Отказ"
   };
 
-  function postData(form) {
+  function bindPostData(form) {
     form.addEventListener("submit", (e) => {
       e.preventDefault();
 
-      const data = new FormData(e.target);
-
       status.textContent = messages.loading;
 
-      fetch("http://localhost:8888/data", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(Object.fromEntries(data))
-      })
+      postData("http://localhost:8888/data", JSON.stringify(Object.fromEntries(new FormData(e.target))))
         .then(res => {
-          console.log(res);
           if (!res.ok) {
             status.textContent = messages.failure;
           } else {
@@ -239,7 +248,6 @@ window.addEventListener("DOMContentLoaded", () => {
           }
         })
         .catch(err => {
-          console.log(`CATCH ERROR: ${err}`);
           status.textContent = messages.failure;
         })
         .finally(() => {
@@ -249,25 +257,6 @@ window.addEventListener("DOMContentLoaded", () => {
             clearTimeout(timerID);
           }, 1500);
         });
-
-      // const request = new XMLHttpRequest();
-      // request.open("POST", "http://localhost:8888/data", true);
-      // request.setRequestHeader("Content-type", "application/json");
-      // request.send(JSON.stringify(Object.fromEntries(data)));
-      // status.textContent = messages.loading;
-
-      // request.addEventListener("load", () => {
-      //   if (request.status === 200) {
-      //     status.textContent = messages.success;
-      //   } else {
-      //     status.textContent = messages.failure;
-      //   }
-
-      //   setTimeout(() => {
-      //     e.target.reset();
-      //     status.textContent = "";
-      //   }, 1500);
-      // });
     });
   }
 });

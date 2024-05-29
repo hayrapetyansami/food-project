@@ -301,7 +301,8 @@ a {
   margin-top: 50px;
   display: flex;
   flex-direction: column;
-  align-items: flex-end
+  align-items: flex-end;
+  position: relative;
 }
 
 .offer__slider-counter {
@@ -336,7 +337,17 @@ a {
 
 .offer__slide {
   width: 100%;
-  height: 390px
+  height: 390px;
+  position: relative;
+}
+
+.offer__slide h2 {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff
 }
 
 .offer__slide img {

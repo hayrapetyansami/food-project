@@ -204,15 +204,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // forms & fetch
   async function postData(url, data) {
-    const result = await fetch(url, {
+    return await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: data
     });
-
-    return await result.json();
   }
 
   async function getData(url) {
@@ -248,7 +246,7 @@ window.addEventListener("DOMContentLoaded", () => {
           }
         })
         .catch(err => {
-          status.textContent = messages.failure;
+          status.textContent = `${messages.failure}: ${err} `;
         })
         .finally(() => {
           const timerID = setTimeout(() => {
@@ -334,7 +332,7 @@ window.addEventListener("DOMContentLoaded", () => {
   function currentSlidesCount(state) {
     switch (state) {
       case "next":
-        slideIndex == slides.length ? slideIndex = 1: slideIndex++;
+        slideIndex == slides.length ? slideIndex = 1 : slideIndex++;
         break;
       case "prev":
         slideIndex == 1 ? slideIndex = slides.length : slideIndex--;
@@ -362,7 +360,7 @@ window.addEventListener("DOMContentLoaded", () => {
     offset == 0 ?
       offset = sliderWidth * (slides.length - 1) :
       offset -= sliderWidth;
-    
+
     sliderInner.style.transform = `translateX(-${offset}px)`;
     currentSlidesCount("prev");
     dotsChange();
@@ -406,7 +404,7 @@ window.addEventListener("DOMContentLoaded", () => {
   // function changeSlide(n) {
   //   showSlides(slideIndex += n);
   // }
-  
+
 
   // prev.addEventListener("click", () => {
   //   changeSlide(-1);

@@ -36,7 +36,7 @@ window.addEventListener("DOMContentLoaded", () => {
   //  tabs end
 
   // timer start
-  const deadline = "2024-05-21";
+  const deadline = "2024-08-08";
 
   function getTimeRemaining(endtime) {
     let days, hours, minutes, seconds;
@@ -413,4 +413,73 @@ window.addEventListener("DOMContentLoaded", () => {
   // next.addEventListener("click", () => {
   //   changeSlide(1);
   // });
+
+  // calculator
+  //  
+
+  const calcResult = document.querySelector(".calculating__result span");
+  let gender = "male", height = 0, weight = 0, age = 0, ratio = 1.2;
+
+  function calcTotal() {
+    if (!gender || !height || !weight || !age || !ratio) {
+      calcResult.textContent = "______";
+      return;
+    }
+
+    if (gender === "female") {
+      calcResult.textContent = Math.round((447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age)) * ratio);
+    } else {
+      calcResult.textContent = Math.round((88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)) * ratio);
+    }
+  }
+
+  function getStaticInfo(parentSelector, activeClass) {
+    const elements = document.querySelectorAll(`${parentSelector} > div`);
+
+    function setClass(elements, e) {
+      elements.forEach(elem => elem.classList.remove(activeClass));
+      e.target.classList.add(activeClass);
+    }
+
+    document.querySelector(parentSelector).addEventListener("click", (e) => {
+      if (e.target.getAttribute("data-ratio")) {
+        ratio = parseFloat(e.target.getAttribute("data-ratio"));
+        setClass(elements, e);
+      }
+      
+      if (e.target.getAttribute("id") === "male" || e.target.getAttribute("id") === "female") {
+        gender = e.target.getAttribute("id");
+        setClass(elements, e);
+      }
+
+      calcTotal();
+    });
+  }
+
+  function getDynamicInfo(selector) {
+    const input = document.querySelector(selector);
+
+    input.addEventListener("input", () => {
+      switch (input.getAttribute("id")) {
+        case "height":
+          height = parseFloat(input.value);
+          break;
+        case "weight":
+          weight = parseFloat(input.value);
+          break;
+        case "age":
+          age = parseFloat(input.value);
+          break;
+      }
+
+      calcTotal();
+    });
+  }
+
+  getStaticInfo("#gender", "calculating__choose-item_active");
+  getStaticInfo(".calculating__choose_big", "calculating__choose-item_active");
+  getDynamicInfo("#height");
+  getDynamicInfo("#weight");
+  getDynamicInfo("#age");
+  calcTotal();
 });

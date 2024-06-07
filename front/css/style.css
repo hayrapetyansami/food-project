@@ -739,6 +739,14 @@ a {
   animation-duration: 1.2s;
 }
 
+.invalid {
+  border: 1px solid #f00;
+}
+
+.valid {
+  border: 1px solid #0f0
+}
+
 @keyframes fade {
   from {
     opacity: 0.1;
